@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Gyroscope } from 'expo-sensors';
-import { Audio } from 'expo-av'; // 👈 import para o áudio
+import { Audio } from 'expo-av';
 import frutas from './frutas.json';
 import filmes from './filmes.json';
 import animais from './animais.json';
@@ -21,18 +21,20 @@ export default function App() {
   const [telaInicial, definirTelaInicial] = useState(true);
   const [permiteSensor, definirPermiteSensor] = useState(false);
   const [modoSelecionado, definirModoSelecionado] = useState(null);
+  const [jogoAtivo, definirJogoAtivo] = useState(false);
+
   const [tempo, definirTempo] = useState(20);
   const [temporizadorAtivo, definirTemporizadorAtivo] = useState(false);
 
   let ultimaTroca = Date.now();
   const intervaloRef = useRef(null);
-  const soundRef = useRef(null); // 👈 referência do som
+  const soundRef = useRef(null);
 
   // 🎶 Função para tocar música
   const tocarMusica = async () => {
     if (!soundRef.current) {
       const { sound } = await Audio.Sound.createAsync(
-        require('./assets/ost.mp3'), // coloque o arquivo em assets
+        require('./assets/ost.mp3'),
         { isLooping: true, volume: 0.5 }
       );
       soundRef.current = sound;
@@ -48,6 +50,15 @@ export default function App() {
       soundRef.current = null;
     }
   };
+
+  // Controla música com base no estado do jogo
+  useEffect(() => {
+    if (jogoAtivo) {
+      tocarMusica();
+    } else {
+      pararMusica();
+    }
+  }, [jogoAtivo]);
 
   // useEffect do temporizador
   useEffect(() => {
@@ -70,7 +81,7 @@ export default function App() {
     };
   }, [temporizadorAtivo, permiteSensor, modoSelecionado]);
 
-  // --------- FRUTAS ----------
+  // ---------- Funções de Frutas ----------
   const iniciarFrutas = () => {
     Gyroscope.setUpdateInterval(100);
     definirInscricao(
@@ -81,13 +92,11 @@ export default function App() {
           const item = frutas[Math.floor(Math.random() * frutas.length)];
           const palavra = Object.keys(item)[0];
           const url = item[palavra];
-          const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-          const novaCorFundo = obterCorAleatória(corFundo);
 
           definirPalavra(palavra);
           definirUrlImagem(url);
-          definirCorTexto(novaCorTexto);
-          definirCorFundo(novaCorFundo);
+          definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+          definirCorFundo(obterCorAleatória(corFundo));
           definirTempo(20);
         }
       })
@@ -98,17 +107,15 @@ export default function App() {
     const item = frutas[Math.floor(Math.random() * frutas.length)];
     const palavra = Object.keys(item)[0];
     const url = item[palavra];
-    const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-    const novaCorFundo = obterCorAleatória(corFundo);
 
     definirPalavra(palavra);
     definirUrlImagem(url);
-    definirCorTexto(novaCorTexto);
-    definirCorFundo(novaCorFundo);
+    definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+    definirCorFundo(obterCorAleatória(corFundo));
     definirTempo(20);
   };
 
-  // --------- FILMES ----------
+  // ---------- Funções de Filmes ----------
   const iniciarFilmes = () => {
     Gyroscope.setUpdateInterval(100);
     definirInscricao(
@@ -119,13 +126,11 @@ export default function App() {
           const item = filmes[Math.floor(Math.random() * filmes.length)];
           const palavra = Object.keys(item)[0];
           const url = item[palavra];
-          const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-          const novaCorFundo = obterCorAleatória(corFundo);
 
           definirPalavra(palavra);
           definirUrlImagem(url);
-          definirCorTexto(novaCorTexto);
-          definirCorFundo(novaCorFundo);
+          definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+          definirCorFundo(obterCorAleatória(corFundo));
           definirTempo(20);
         }
       })
@@ -136,17 +141,15 @@ export default function App() {
     const item = filmes[Math.floor(Math.random() * filmes.length)];
     const palavra = Object.keys(item)[0];
     const url = item[palavra];
-    const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-    const novaCorFundo = obterCorAleatória(corFundo);
 
     definirPalavra(palavra);
     definirUrlImagem(url);
-    definirCorTexto(novaCorTexto);
-    definirCorFundo(novaCorFundo);
+    definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+    definirCorFundo(obterCorAleatória(corFundo));
     definirTempo(20);
   };
 
-  // --------- ANIMAIS ----------
+  // ---------- Funções de Animais ----------
   const iniciarAnimais = () => {
     Gyroscope.setUpdateInterval(100);
     definirInscricao(
@@ -157,13 +160,11 @@ export default function App() {
           const item = animais[Math.floor(Math.random() * animais.length)];
           const palavra = Object.keys(item)[0];
           const url = item[palavra];
-          const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-          const novaCorFundo = obterCorAleatória(corFundo);
 
           definirPalavra(palavra);
           definirUrlImagem(url);
-          definirCorTexto(novaCorTexto);
-          definirCorFundo(novaCorFundo);
+          definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+          definirCorFundo(obterCorAleatória(corFundo));
           definirTempo(20);
         }
       })
@@ -174,13 +175,11 @@ export default function App() {
     const item = animais[Math.floor(Math.random() * animais.length)];
     const palavra = Object.keys(item)[0];
     const url = item[palavra];
-    const novaCorTexto = corTexto === '#000000' ? '#FFFFFF' : '#000000';
-    const novaCorFundo = obterCorAleatória(corFundo);
 
     definirPalavra(palavra);
     definirUrlImagem(url);
-    definirCorTexto(novaCorTexto);
-    definirCorFundo(novaCorFundo);
+    definirCorTexto(corTexto === '#000000' ? '#FFFFFF' : '#000000');
+    definirCorFundo(obterCorAleatória(corFundo));
     definirTempo(20);
   };
 
@@ -189,7 +188,7 @@ export default function App() {
     definirInscricao(null);
   };
 
-  // --------- TELAS ----------
+  // ---------- Telas ----------
   const renderTelaInicial = () => (
     <View style={[estilos.tela, { backgroundColor: '#FFFFFF' }]}>
       <Text style={estilos.titulo}>Adivinha quem sou?</Text>
@@ -215,8 +214,7 @@ export default function App() {
     definirPermiteSensor(true);
     definirTemporizadorAtivo(true);
     definirTempo(20);
-
-    tocarMusica(); // 🎶 toca música só quando jogo inicia
+    definirJogoAtivo(true); // ✅ ativa música
 
     if (modo === 'frutas') { sortearFrutas(); iniciarFrutas(); }
     if (modo === 'filmes') { sortearFilmes(); iniciarFilmes(); }
@@ -255,7 +253,7 @@ export default function App() {
           definirTemporizadorAtivo(false);
           definirTempo(20);
           pararSensor();
-          pararMusica(); // 🎶 para música quando volta ao menu
+          definirJogoAtivo(false); // ✅ para música
         }}>
         <Text style={estilos.textoBotao}>Voltar ao Menu</Text>
       </TouchableOpacity>
